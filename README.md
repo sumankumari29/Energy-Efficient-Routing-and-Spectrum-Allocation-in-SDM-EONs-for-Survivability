@@ -1,6 +1,3 @@
-# Energy-Efficient-Routing-and-Spectrum-Allocation-in-SDM-EONs-for-Survivability
-
-```markdown
 # Energy-Efficient Fragmentation-Aware Routing Modulation Spectrum and Core Allocation Algorithms for Survivable Space Division Multiplexed Elastic Optical Networks
 
 ## Project Overview
@@ -83,6 +80,3 @@ We would like to thank XYZ for their guidance and support throughout this projec
 
 Feel free to explore and enhance the project, and let us know if you have any questions or suggestions!
 
-```
-
-Feel free to customize the sections based on specific details or additional information relevant to your project.
