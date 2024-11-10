@@ -13,12 +13,12 @@ The project "Energy-Efficient Fragmentation-Aware Routing Modulation Spectrum an
 
 ## Team
 
-- **[Member 1 : Jyoti Kumari Shaw (Team Leader)]**
-- **[Member 2 : Suman Kumari]**
-- **[Member 3 : Kafi Mallick]**
-- **[Member 4 : Rajdeep Karmakar]**
+- **Member 1 : Jyoti Kumari Shaw (Team Leader)**
+- **Member 2 : Suman Kumari**
+- **Member 3 : Kafi Mallick**
+- **Member 4 : Rajdwip Karmakar**
 
-**Guided by**: Dr. Monish Chatterjee, [Asansol Engineering College]
+**Guided by**: Dr. Monish Chatterjee, Head Of Department, Asansol Engineering College
 
 ## Getting Started
 
