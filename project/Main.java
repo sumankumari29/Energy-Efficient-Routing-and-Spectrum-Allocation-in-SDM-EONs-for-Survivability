@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.*;
 import java.util.*;
 import java.sql.*;
-// Press Shift twice to open the Search Everywhere dialog and type show whitespaces,
+// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     static int INF=Integer.MAX_VALUE;
@@ -15,6 +15,7 @@ public class Main {
     static ArrayList<Edge> NSFnetwork[];
     static ArrayList<Edge> Opticalnetwork[];
     //Hash Map to Map edges of graph
+
     static  HashMap<String,Integer> USAnetwork_edge=new HashMap<>();
     static  HashMap<String,Integer> Cost239_edge=new HashMap<>();
     static  HashMap<String,Integer> NSFnetwork_edge=new HashMap<>();
@@ -523,7 +524,7 @@ public class Main {
 
             //create a connection
             String url="jdbc:mysql://localhost:3306/all_path";
-            Connection con=DriverManager.getConnection(url,"root","");
+            Connection con=DriverManager.getConnection(url,"root","Kaifi@02");
 
             for(int network=0;network<NetworkName.length;network++) {
                 int start = startInd[network];
@@ -941,13 +942,13 @@ public class Main {
 
 
         // generateRequestMenu(NetworkName, startIndex, endIndex);
-        generateAllPath(NetworkName,startIndex,endIndex);
-      // EnergyCalculate obj=new EnergyCalculate();
-       // obj.calculateEnergyForPath(1,3,80,"Cost239");
-       // EnergyCalculate.readFileForEnergy();
-    //    mapMenu();
+//        generateAllPath(NetworkName,startIndex,endIndex);
+        // EnergyCalculate obj=new EnergyCalculate();
+        // obj.calculateEnergyForPath(1,3,80,"Cost239");
+        // EnergyCalculate.readFileForEnergy();
+        mapMenu();
 
-       //CrosstalkCalculate.calculateXTMenu();
+        //CrosstalkCalculate.calculateXTMenu();
         //CoreAllocation obj=new CoreAllocation();
        /*
         int subcarrier=(int)EnergyCalculate.cal_N(80,37.5,2);
@@ -956,15 +957,18 @@ public class Main {
 
        System.out.println();
        */
-    //    CoreAllocation.readFileForCoreAllocation();
+        CoreAllocation.readFileForCoreAllocation();
         //CoreAllocation.display_slots(CoreAllocation.core_slots);
-       /* CoreAllocation.initializeSlots("USAnetwork");
+//      CoreAllocation.initializeSlots("USAnetwork");
         //CoreAllocation.mark_all_slots(CoreAllocation.core_slots);
-        CoreAllocation.copy_edge_map=USAnetwork_edge;
+       /*  CoreAllocation.copy_edge_map=USAnetwork_edge;
+        CoreAllocation.copy_network=new ArrayList[24];
+        createGraph1(CoreAllocation.copy_network);
         int path[]={1,0};
-        System.out.println(CoreAllocation.allocateCoreLeastFrequentModified(200,path));
-
+        System.out.println(CoreAllocation.allocateCoreUniformly(20,path));
     */
+//        int path[]={1,0};
+//        CoreAllocation.initializeTempSlotForPath(path);
     }
 }
 class CrosstalkCalculate extends Main
@@ -975,7 +979,7 @@ class CrosstalkCalculate extends Main
     static final double bending_radius=50*Math.pow(10,-6);
 
     static final double core_pitch=45*Math.pow(10,-9);
-   //CIPL stands for Cross Talk Increase Per Unit Length
+    //CIPL stands for Cross Talk Increase Per Unit Length
     static final double CIPL=(2*(Math.pow(cop_coeff,2))*bending_radius)/(prop_const*core_pitch);
 
     static double USAnetwork_XT[][]=new double[43][7];
@@ -989,17 +993,17 @@ class CrosstalkCalculate extends Main
     {
         double val;
         double helper=AdjCore*(Math.exp((-1)*(AdjCore+1)*2*CIPL*length));
-        System.out.println("Value of helper: "+helper);
+        // System.out.println("Value of helper: "+helper);
         //double numerator=AdjCore*(1-Math.exp((-1)*(AdjCore+1)*2*CIPL*length));
         double numerator=AdjCore-helper;
-        System.out.println("Value of CIPL: "+CIPL);
-        System.out.println(numerator);
+        //System.out.println("Value of CIPL: "+CIPL);
+
 
         //double denominator=1+AdjCore*Math.exp((-1)*(AdjCore+1)*2*CIPL*length);
         double denominator=1+helper;
-        System.out.println(denominator);
+
         val=(numerator/denominator);
-        return val;
+        return Math.log(val);
     }
     static void calculateXTForALl(ArrayList<Edge> graph[],String networkName)
     {
@@ -1013,7 +1017,7 @@ class CrosstalkCalculate extends Main
             visited=new int[23];
         else if(networkName=="Opticalnetwork")
             visited=new int[25];
-       // for (int b : visited) b = 0;
+        // for (int b : visited) b = 0;
 
         for(int i=0;i<n;i++)
         {
@@ -1029,7 +1033,7 @@ class CrosstalkCalculate extends Main
                     edge_number=USAnetwork_edge.get(key);
                 else if(networkName=="Cost239")
                     edge_number=Cost239_edge.get(key);
-                else if(networkName=="NSFnetwork")
+                else if(Objects.equals(networkName, "NSFnetwork"))
                     edge_number=NSFnetwork_edge.get(key);
                 else if(networkName=="Opticalnetwork")
                     edge_number=Opticalnetwork_edge.get(key);
@@ -1062,7 +1066,7 @@ class CrosstalkCalculate extends Main
         {
             for(int j=0;j<n;j++)
             {
-              System.out.print(arr[i][j]+" ");
+                System.out.print(arr[i][j]+" ");
             }
             System.out.println();
         }
@@ -1125,7 +1129,7 @@ class EnergyCalculate extends Main
     {
         return (2* e_m *cal_N);
     }
-     static double calculateSm(int dist) {
+    static double calculateSm(int dist) {
 
         if (dist <=500) {
             return 50;
@@ -1179,7 +1183,7 @@ class EnergyCalculate extends Main
 
         return new double[]{eoxc,edfa};
     }
-     static double calculateTotalEnergy(String NetworkName,int Path[],int Data,int Distance)
+    static double calculateTotalEnergy(String NetworkName,int Path[],int Data,int Distance)
     {
         double  ebvt=0.0;
         double  eoxc=0.0;
@@ -1196,57 +1200,57 @@ class EnergyCalculate extends Main
 
         return total;
     }
-  static int[] ConvertArray(String str)
-  {
+    static int[] ConvertArray(String str)
+    {
 
-      String[] splitArray = str.split(",");
-      int[] array = new int[splitArray.length];
+        String[] splitArray = str.split(",");
+        int[] array = new int[splitArray.length];
 
-      // parsing the String argument as a signed decimal
-      // integer object and storing that integer into the
-      // array
-      for (int i = 0; i < splitArray.length; i++) {
-          array[i] = Integer.parseInt(splitArray[i]);
-      }
-      return array;
-  }
-  static void readFileForEnergy() throws IOException
-  {
-      String flag,line;
-      do {
-          Scanner sc = new Scanner(System.in);
-          System.out.println("Enter File name: ");
-          String fname = sc.nextLine();
-          fname="C:\\Users\\Joyti\\Project1\\"+fname;
-          FileReader fr = new FileReader(fname);
-          BufferedReader br = new BufferedReader(fr);
-          line = br.readLine();
-          int request[] = ConvertArray(line);
+        // parsing the String argument as a signed decimal
+        // integer object and storing that integer into the
+        // array
+        for (int i = 0; i < splitArray.length; i++) {
+            array[i] = Integer.parseInt(splitArray[i]);
+        }
+        return array;
+    }
+    static void readFileForEnergy() throws IOException
+    {
+        String flag,line;
+        do {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Enter File name: ");
+            String fname = sc.nextLine();
+            fname= "C:\\Users\\kaifi\\OneDrive\\Desktop\\projectAec\\Progress_Presentation\\src\\" + fname;
+            FileReader fr = new FileReader(fname);
+            BufferedReader br = new BufferedReader(fr);
+            line = br.readLine();
+            int request[] = ConvertArray(line);
 
-          while (line != null) {
-              System.out.println("Src: "+request[0]+" Dest: "+request[1]+" Demand: "+request[2]);
-              if (fname.contains("USAnetwork")) {
-                  calculateEnergyForPath(request[0], request[1], request[2], "USAnetwork");
-              }
-              else if (fname.contains("Cost239"))
-                  calculateEnergyForPath(request[0], request[1], request[2], "Cost239");
-              else if (fname.contains("NSFnetwork"))
-                  calculateEnergyForPath(request[0], request[1], request[2], "NSFnetwork");
-              else if (fname.contains("Opticalnetwork"))
-                  calculateEnergyForPath(request[0], request[1], request[2], "Opticalnetwork");
+            while (line != null) {
+                System.out.println("Src: "+request[0]+" Dest: "+request[1]+" Demand: "+request[2]);
+                if (fname.contains("USAnetwork")) {
+                    calculateEnergyForPath(request[0], request[1], request[2], "USAnetwork");
+                }
+                else if (fname.contains("Cost239"))
+                    calculateEnergyForPath(request[0], request[1], request[2], "Cost239");
+                else if (fname.contains("NSFnetwork"))
+                    calculateEnergyForPath(request[0], request[1], request[2], "NSFnetwork");
+                else if (fname.contains("Opticalnetwork"))
+                    calculateEnergyForPath(request[0], request[1], request[2], "Opticalnetwork");
 
 
-                  line = br.readLine();
-                  if(line!=null)
+                line = br.readLine();
+                if(line!=null)
                     request = ConvertArray(line);
 
-          }
-          br.close();
-          System.out.println("Do You Want To Continue, type yes or no: ");
-          flag=sc.next();
-      }while(flag.equalsIgnoreCase("yes"));
+            }
+            br.close();
+            System.out.println("Do You Want To Continue, type yes or no: ");
+            flag=sc.next();
+        }while(flag.equalsIgnoreCase("yes"));
 
-  }
+    }
     static void calculateEnergyForPath(int src,int dest,int dataDemand,String NetworkName)
     {
         try{
@@ -1256,7 +1260,7 @@ class EnergyCalculate extends Main
 
             //create a connection
             String url="jdbc:mysql://localhost:3306/all_path";
-            Connection con=DriverManager.getConnection(url,"root","");
+            Connection con=DriverManager.getConnection(url,"root","Kaifi@02");
             String q1;
             String key=src+","+dest;
             PreparedStatement pstmt1;
@@ -1291,45 +1295,45 @@ class EnergyCalculate extends Main
 
             }
 
-                rs.next();
-                int path1[] = ConvertArray(rs.getString(2));
-                int path2[] = ConvertArray(rs.getString(4));
-                int path3[] = ConvertArray(rs.getString(6));
-                int dist1 = rs.getInt(3);
-                int dist2 = rs.getInt(5);
-                int dist3 = rs.getInt(7);
-                //System.out.println("path1: " + path1 + " path2: " + path2 + " path3: " + path3);
-                //System.out.println(caculateTotalEnergy(NetworkName,path1,dataDemand,dist1));
-                //Calculating Energy for first combination
-                double energy_path1=calculateTotalEnergy(NetworkName,path1,dataDemand,dist1);
-                double energy_path2=0.0d;
-                double energy_path3=0.0d;
-               if(dist2!=Integer.MAX_VALUE)
-                     energy_path2=calculateTotalEnergy(NetworkName,path2,dataDemand,dist2);
-                else
-                {
-                    System.out.println("Second Path Not Exist");
-                }
-                //System.out.println("Energy of path1 and path2: "+(energy_path1+energy_path2));
-                result.put("c1",(energy_path1+energy_path2));
-                if(dist3!=Integer.MAX_VALUE)
-                {
-                    //Calculating energy for 2nd combination
-                    energy_path3=calculateTotalEnergy(NetworkName,path3,dataDemand,dist3);
-                   // System.out.println("Energy of path2 and path3: "+(energy_path2+energy_path3));
-                    result.put("c2",(energy_path2+energy_path3));
-                    //calculating energy for 3rd combination
-                   // System.out.println("Energy of path3 and path1: "+(energy_path3+energy_path1));
-                    result.put("c3",(energy_path3+energy_path1));
-                    //Calculating energy for 4th combination
-                    double p1=calculateTotalEnergy(NetworkName,path1,(dataDemand/2),dist1);
-                    double p2=calculateTotalEnergy(NetworkName,path2,(dataDemand/2),dist2);
-                    double p3=calculateTotalEnergy(NetworkName,path3,(dataDemand/2),dist3);
-                    //System.out.println("Energy of path1,path2 and path3: "+(p1+p2+p3));
-                    result.put("c4",(p1+p2+p3));
-                }
-                result=sortByValue(result);
-                for (Map.Entry<String, Double> en : result.entrySet()) {
+            rs.next();
+            int path1[] = ConvertArray(rs.getString(2));
+            int path2[] = ConvertArray(rs.getString(4));
+            int path3[] = ConvertArray(rs.getString(6));
+            int dist1 = rs.getInt(3);
+            int dist2 = rs.getInt(5);
+            int dist3 = rs.getInt(7);
+            //System.out.println("path1: " + path1 + " path2: " + path2 + " path3: " + path3);
+            //System.out.println(caculateTotalEnergy(NetworkName,path1,dataDemand,dist1));
+            //Calculating Energy for first combination
+            double energy_path1=calculateTotalEnergy(NetworkName,path1,dataDemand,dist1);
+            double energy_path2=0.0d;
+            double energy_path3=0.0d;
+            if(dist2!=Integer.MAX_VALUE)
+                energy_path2=calculateTotalEnergy(NetworkName,path2,dataDemand,dist2);
+            else
+            {
+                System.out.println("Second Path Not Exist");
+            }
+            //System.out.println("Energy of path1 and path2: "+(energy_path1+energy_path2));
+            result.put("c1",(energy_path1+energy_path2));
+            if(dist3!=Integer.MAX_VALUE)
+            {
+                //Calculating energy for 2nd combination
+                energy_path3=calculateTotalEnergy(NetworkName,path3,dataDemand,dist3);
+                // System.out.println("Energy of path2 and path3: "+(energy_path2+energy_path3));
+                result.put("c2",(energy_path2+energy_path3));
+                //calculating energy for 3rd combination
+                // System.out.println("Energy of path3 and path1: "+(energy_path3+energy_path1));
+                result.put("c3",(energy_path3+energy_path1));
+                //Calculating energy for 4th combination
+                double p1=calculateTotalEnergy(NetworkName,path1,(dataDemand/2),dist1);
+                double p2=calculateTotalEnergy(NetworkName,path2,(dataDemand/2),dist2);
+                double p3=calculateTotalEnergy(NetworkName,path3,(dataDemand/2),dist3);
+                //System.out.println("Energy of path1,path2 and path3: "+(p1+p2+p3));
+                result.put("c4",(p1+p2+p3));
+            }
+            result=sortByValue(result);
+            for (Map.Entry<String, Double> en : result.entrySet()) {
                 System.out.println("Key = " + en.getKey() + ", Value = " + en.getValue());
             }
 
@@ -1366,225 +1370,101 @@ class EnergyCalculate extends Main
 
 class CoreAllocation extends Main
 {
-   static  int core_size[]={1,1,2,3,5,7,11};
-   static final int total_slots=150;
+    static  int core_size[]={1,1,2,3,5,7,11};
+    static final int total_slots=150;
     static final  int number_of_cores=7;
     static int last_allocated_slot_core0=0;
-   static int core_slots[][][];
+    static int core_slots[][][];
     static HashMap<String,Integer> copy_edge_map=new HashMap<>();
 
+    static  ArrayList<Edge> copy_network[];
     static int frequencyOfCore[]=new int[number_of_cores];
+    static int adjacent_core[][]={{1,2,3,4,5,6},{0,2,6},{0,1,3},{0,2,4},{0,3,5},{0,4,6},{0,5,1}};
 
-    static void initializeFrequency()
+    static int temp_slot[][] = new int[number_of_cores][total_slots];
+
+    static void initializeSlots(String networkName)
     {
-        for(int i=0;i<number_of_cores;i++)
-            frequencyOfCore[i]=0;
-    }
-   static void initializeSlots(String networkName)
-   {
 
-       if(networkName.equalsIgnoreCase("USAnetwork"))
-           core_slots=new int[noOFEdges[0]][number_of_cores][total_slots+1];
+        if(networkName.equalsIgnoreCase("USAnetwork"))
+//            adding 2 in total_slots for max-index used and max_frequency of the core
+            core_slots=new int[noOFEdges[0]][number_of_cores][total_slots+2];
 
-       else if(networkName.equalsIgnoreCase("Cost239"))
-           core_slots=new int[noOFEdges[1]][number_of_cores][total_slots+1];
-       else if(networkName.equalsIgnoreCase("NSFnetwork"))
-           core_slots=new int[noOFEdges[2]][number_of_cores][total_slots+1];
-       else if(networkName.equalsIgnoreCase("Opticalnetwork"))
-           core_slots=new int[noOFEdges[3]][number_of_cores][total_slots+1];
+        else if(networkName.equalsIgnoreCase("Cost239"))
+            core_slots=new int[noOFEdges[1]][number_of_cores][total_slots+2];
+        else if(networkName.equalsIgnoreCase("NSFnetwork"))
+            core_slots=new int[noOFEdges[2]][number_of_cores][total_slots+2];
+        else if(networkName.equalsIgnoreCase("Opticalnetwork"))
+            core_slots=new int[noOFEdges[3]][number_of_cores][total_slots+2];
 
-       for(int i=0;i<core_slots.length;i++)
-       {
-           for(int j=0;j<number_of_cores;j++)
-           {
-               for(int k=0;k<total_slots+1;k++)
-                   core_slots[i][j][k]=0;
-           }
-       }
-
-      // display_slots(core_slots);
-   }
-   static void display_slots(int core_slots[][][])
-   {
-       for(int i=0;i<core_slots.length;i++)
-       {
-           System.out.println("For Node Number: "+i);
-           for(int j=0;j<number_of_cores;j++)
-           {
-               System.out.println("For Core Number: "+j);
-               for(int k=0;k<total_slots+1;k++)
-                   System.out.print(core_slots[i][j][k]+"   ");
-               System.out.println();
-           }
-       }
-   }
-
-    static int allocateCoreLeastFrequent(int requested_slot,int path[])
-    {
-        int flag=1;
-        for(int i=number_of_cores-1;i>=2;i--)
+        for(int i=0;i<core_slots.length;i++)
         {
-            if(requested_slot>=core_size[i])
+            for(int j=0;j<number_of_cores;j++)
             {
-                int max = i;
-                int min = i - 1;
-                //Random random = new Random();
-                //int ind = random.nextInt(max - min + 1) + min;
-                int ind;
-                ind=frequencyOfCore[max]<=frequencyOfCore[min]?max:min;
-               // System.out.println(frequencyOfCore[ind]+" ");
+                for(int k=0;k<total_slots+2;k++)
+                    core_slots[i][j][k]=0;
+            }
+        }
 
-                int no_of_slot_needed = (requested_slot / core_size[ind])*core_size[ind]+2;
-                int start_index=isSafe(path,ind,no_of_slot_needed);
-                int slot_given=0;
-                if(start_index!=-1) {
-                    slot_given = no_of_slot_needed;
-                    markSlot(path,ind,start_index,start_index+slot_given-1);
-                    frequencyOfCore[ind]++;
-                }
+         display_slots(core_slots);
+    }
+    static void display_slots(int core_slots[][][])
+    {
+        for(int i=0;i<core_slots.length;i++)
+        {
+            System.out.println("For Node Number: "+i);
+            for(int j=0;j<number_of_cores;j++)
+            {
+                System.out.println("For Core Number: "+j);
+                for(int k=0;k<total_slots+2;k++)
+                    System.out.print(core_slots[i][j][k]+"   ");
+                System.out.println();
+            }
+        }
+    }
 
-                if(slot_given!=0)
-                    System.out.println("core: "+ind+" Group: "+(requested_slot / core_size[ind]));
-                requested_slot = requested_slot - (slot_given-2);
-                if(requested_slot==0)
+    //function to calculate active adjacent cores(The core which is in used)
+    static int calculateActiveAdjacentCore(int edgenumber,int corenumber,int startind,int lastind)
+    {
+        int active=0;
+        int temp;
+
+        for(int i=0;i<adjacent_core[corenumber].length;i++)
+        {
+            temp=adjacent_core[corenumber][i];
+            for(int j=startind;j<=lastind;j++)
+            {
+                if(core_slots[edgenumber][temp][j]==1)
+                {
+                    active++;
+                    //System.out.println(temp+" ");
                     break;
-            }
-        }
-        if(requested_slot==1)
-        {
-            //indicate upto slot ind needed
-            int slot=requested_slot+2;
-            int start_ind=isSafe(path,1,slot);
-            if(start_ind!=-1)
-            {
-                markSlot(path,1,start_ind,start_ind+slot-1);
-                frequencyOfCore[1]++;
-                System.out.println("core :"+1+" slot: "+requested_slot);
-                requested_slot=0;
-            }
-
-        }
-        if(requested_slot!=0)
-        {
-            //indicate upto slot ind needed
-            int slot=requested_slot+2;
-            int start_ind=isSafe(path,0,slot);
-            if(start_ind!=-1)
-            {
-                markSlot(path,0,start_ind,start_ind+slot-1);
-                frequencyOfCore[0]++;
-                System.out.println("core :"+0+" slot: "+requested_slot);
-            }
-            else {
-                System.out.println("Allocation Not Possible");
-                flag=0;
-            }
-
-        }
-        if(flag==1)
-            return 1;
-        else
-            return 0;
-    }
-
-     static int allocateCore(int requested_slot,int path[])
-     {
-         int flag=1;
-
-        for(int i=number_of_cores-1;i>=2;i--)
-        {
-            if(requested_slot>=core_size[i])
-            {
-                int max = i;
-                int min = i - 1;
-                Random random = new Random();
-                int ind = random.nextInt(max - min + 1) + min;
-
-                int no_of_slot_needed = (requested_slot / core_size[ind])*core_size[ind]+2;
-                int start_index=isSafe(path,ind,no_of_slot_needed);
-                int slot_given=0;
-                if(start_index!=-1) {
-                    slot_given = no_of_slot_needed;
-                    markSlot(path,ind,start_index,start_index+slot_given-1);
                 }
-
-                if(slot_given!=0)
-                    System.out.println("core: "+ind+" Group: "+(requested_slot / core_size[ind]));
-                requested_slot = requested_slot - (slot_given-2);
-                if(requested_slot==0)
-                    break;
-            }
-        }
-         if(requested_slot==1)
-         {
-             //indicate upto slot ind needed
-             int slot=requested_slot+2;
-             int start_ind=isSafe(path,1,slot);
-             if(start_ind!=-1)
-             {
-                 markSlot(path,1,start_ind,start_ind+slot-1);
-                 System.out.println("core :"+1+" slot: "+requested_slot);
-                 requested_slot=0;
-             }
-
-         }
-        if(requested_slot!=0)
-        {
-            //indicate upto slot ind needed
-            int slot=requested_slot+2;
-            int start_ind=isSafe(path,0,slot);
-            if(start_ind!=-1)
-            {
-                markSlot(path,0,start_ind,start_ind+slot-1);
-                System.out.println("core :"+0+" slot: "+requested_slot);
-            }
-            else {
-                System.out.println("Allocation Not Possible");
-                flag=0;
             }
 
         }
-        if(flag==0)
-            return 0;
-        else
-            return 1;
-
+        return active;
     }
-    static int isSafe(int path[],int core_number,int slot)
+    //Calculating crosstalk for a particular core over a path;
+    static double calculateCrosstalk(int path[],int corenumber,int startind,int lastind)
     {
-        int flag=1;
-        int max_last_index=-1;
-        int Nodenum;
+        int edgenum;
+        double crosstalk=0;
         for(int i=path.length-1;i>=1;i--)
         {
             int j=i-1;
             String key=path[i]+","+path[j];
+            int weight=getWeight(copy_network,path[i],path[j]);
             //Node num denotes the edge number corresponding to the key
-            Nodenum=copy_edge_map.get(key);
-            max_last_index=Math.max(max_last_index,core_slots[Nodenum][core_number][total_slots+1-1]);
+            edgenum=copy_edge_map.get(key);
+            int active_adjacent_core=calculateActiveAdjacentCore(edgenum,corenumber,startind,lastind);
+            crosstalk+=CrosstalkCalculate.calculateXT(weight,active_adjacent_core);
 
         }
-        int start=max_last_index+1;
-        int end=max_last_index+slot-1;
-        if(end>=total_slots)
-            return -1;
-        for(int i=path.length-1;i>=1;i--)
-        {
-            int k=i-1;
-            String key=path[i]+","+path[k];
-            //Node num denotes the edge number corresponding to the key
-            Nodenum=copy_edge_map.get(key);
-            for(int j=start;j<=end;j++) {
-                if(core_slots[Nodenum][core_number][j] == 1) {
-                    flag =-1;
-                    return flag;
-                }
-            }
+        return crosstalk;
 
-        }
-        flag=start;
-        return flag;
     }
+
     static void markSlot(int path[],int core_number,int start,int end)
     {
         int Nodenum;
@@ -1609,7 +1489,7 @@ class CoreAllocation extends Main
 
             //create a connection
             String url = "jdbc:mysql://localhost:3306/all_path";
-            Connection con = DriverManager.getConnection(url, "root", "user@123");
+            Connection con = DriverManager.getConnection(url, "root", "Kaifi@02");
             String q1;
             String key;
             PreparedStatement pstmt1;
@@ -1618,7 +1498,8 @@ class CoreAllocation extends Main
                 Scanner sc = new Scanner(System.in);
                 System.out.println("Enter File name: ");
                 String fname = sc.nextLine();
-                fname = "/Users/sumankumari/Desktop/Suman/project/NSFnetwork_VSD_150" + fname;
+
+                fname = "C:\\Users\\kaifi\\OneDrive\\Desktop\\projectAec\\Progress_Presentation\\src\\" + fname;
                 FileReader fr = new FileReader(fname);
                 BufferedReader br = new BufferedReader(fr);
                 line = br.readLine();
@@ -1629,18 +1510,26 @@ class CoreAllocation extends Main
                 if(fname.contains("USAnetwork")) {
                     initializeSlots("USAnetwork");
                     copy_edge_map.putAll(USAnetwork_edge);
+                    copy_network=new ArrayList[24];
+                    createGraph1(copy_network);
                 }
                 else if(fname.contains("Cost239")) {
                     initializeSlots("Cost239");
                     copy_edge_map.putAll(Cost239_edge);
+                    copy_network=new ArrayList[12];
+                    createGraph2(copy_network);
                 }
                 else if(fname.contains("NSFnetwork")) {
                     initializeSlots("NSFnetwork");
                     copy_edge_map.putAll(NSFnetwork_edge);
+                    copy_network=new ArrayList[15];
+                    createGraph3(copy_network);
                 }
                 else if(fname.contains("Opticalnetwork")) {
                     initializeSlots("Opticalnetwork");
                     copy_edge_map.putAll(Opticalnetwork_edge);
+                    copy_network=new ArrayList[14];
+                    createGraph4(copy_network);
                 }
 
                 while (line != null) {
@@ -1687,13 +1576,15 @@ class CoreAllocation extends Main
                     double s_m=EnergyCalculate.calculateSm(dist1);
                     int subCarrier=(int)EnergyCalculate.cal_N(request[2],s_m,2);
                     System.out.println("Sub Carrier: "+subCarrier);
-                   // allocateCore(subCarrier,path);
+                     served_requests+=allocateCore(subCarrier,path);
 
-                    noofrequest++;
+                     noofrequest++;
 
-                  //served_requests+=allocateCore(subCarrier,path);
-                  // served_requests+=allocateCoreLeastFrequent(subCarrier,path);
-                   served_requests+=allocateCoreLeastFrequentModified(subCarrier,path);
+//                    served_requests+=allocateCoreUniformly(subCarrier,path);
+//                    served_requests+=allocateCoreLeastFrequent(subCarrier,path);
+//                    served_requests+=allocateCoreLeastFrequentModified(subCarrier,path);
+
+
                     //int dist2 = rs.getInt(5);
                     //int dist3 = rs.getInt(7);
 
@@ -1705,7 +1596,7 @@ class CoreAllocation extends Main
                 br.close();
                 System.out.println("\n Total Requests: "+noofrequest+" served_requests: "+served_requests+" Blocked Request: "+(noofrequest-served_requests));
                 display_slots(core_slots);
-                copy_edge_map.clear();
+//                copy_edge_map.clear();
                 System.out.println("Do You Want To Continue, type yes or no: ");
                 flag = sc.next();
             } while (flag.equalsIgnoreCase("yes"));
@@ -1718,13 +1609,198 @@ class CoreAllocation extends Main
         }
     }
 
+    //   Algorithm-1 Randomized core Allocation
+    static int allocateCore(int requested_slot,int path[])
+    {
+        int flag=1;
+        double crosstalk=0.0;
+        temp_slot = new int[number_of_cores][total_slots];
+        initializeTempSlotForPath(path);
+        for(int i=number_of_cores-1;i>=2;i--)
+        {
+            if(requested_slot>=core_size[i])
+
+
+            {
+                int max = i;
+                int min = i - 1;
+                Random random = new Random();
+                int ind = random.nextInt(max - min + 1) + min;
+
+                int no_of_slot_needed = (requested_slot / core_size[ind])*core_size[ind]+2;
+
+                int start_index=isSafe2(path,ind,no_of_slot_needed,temp_slot);
+
+                int slot_given=0;
+                if(start_index!=-1) {
+                    crosstalk=calculateCrosstalk(path,ind,start_index,start_index+slot_given-1);
+                    System.out.println("Cross talk for core "+ind+" :"+crosstalk);
+                    if(crosstalk<-16) {
+                        slot_given = no_of_slot_needed;
+                        markSlot(path, ind, start_index, start_index + slot_given - 1);
+                    }
+                }
+
+                if(slot_given!=0)
+                    System.out.println("core: "+ind+" Group: "+(requested_slot / core_size[ind]));
+                requested_slot = requested_slot - (slot_given-2);
+                if(requested_slot==0)
+                    break;
+            }
+        }
+        if(requested_slot==1)
+        {
+            //indicate upto slot ind needed
+            int slot=requested_slot+2;
+
+            int start_ind=isSafe2(path,1,slot,temp_slot);
+
+            if(start_ind!=-1)
+            {
+                crosstalk=calculateCrosstalk(path,1,start_ind,start_ind+slot-1);
+                System.out.println("Cross talk for core "+1+" :"+crosstalk);
+                if(crosstalk<-16) {
+                    markSlot(path, 1, start_ind, start_ind + slot - 1);
+                    System.out.println("core :" + 1 + " slot: " + requested_slot);
+                    requested_slot = 0;
+                }
+            }
+
+        }
+        if(requested_slot!=0)
+        {
+            //indicate upto slot ind needed
+            int slot=requested_slot+2;
+
+            int start_ind=isSafe2(path,0,slot,temp_slot);
+
+            if(start_ind!=-1)
+            {
+                crosstalk=calculateCrosstalk(path,0,start_ind,start_ind+slot-1);
+                System.out.println("Cross talk for core "+0+" :"+crosstalk);
+                if(crosstalk<-16) {
+                    markSlot(path, 0, start_ind, start_ind + slot - 1);
+                    System.out.println("core :" + 0 + " slot: " + requested_slot);
+                }
+            }
+            else {
+                System.out.println("Allocation Not Possible");
+                flag=0;
+            }
+
+        }
+        if(flag==0)
+            return 0;
+        else
+            return 1;
+
+    }
+//        Algorithm-2 Frequency Randomized Core Allocation
+    static int allocateCoreLeastFrequent(int requested_slot,int path[])
+    {
+        int flag=1;
+//        re-initializing of temp_slot
+        temp_slot = new int[number_of_cores][total_slots];
+
+        initializeTempSlotForPath(path);
+
+        initializeCoreFrequencyForPath(path);
+
+        for(int i=number_of_cores-1;i>=2;i--)
+        {
+            if(requested_slot>=core_size[i])
+            {
+                int max = i;
+                int min = i - 1;
+                //Random random = new Random();
+                //int ind = random.nextInt(max - min + 1) + min;
+                int ind;
+                ind=frequencyOfCore[max]<=frequencyOfCore[min]?max:min;
+                // System.out.println(frequencyOfCore[ind]+" ");
+
+                int no_of_slot_needed = (requested_slot / core_size[ind])*core_size[ind]+2;
+
+               int start_index=isSafe2(path,ind,no_of_slot_needed,temp_slot);
+
+                int slot_given=0;
+                if(start_index!=-1) {
+                    slot_given = no_of_slot_needed;
+                    markSlot(path,ind,start_index,start_index+slot_given-1);
+
+                    frequencyOfCore[ind]++;
+
+                    incrementCoreFrequency(path,ind);
+
+                }
+
+                if(slot_given!=0)
+                    System.out.println("core: "+ind+" Group: "+(requested_slot / core_size[ind]));
+                requested_slot = requested_slot - (slot_given-2);
+                if(requested_slot==0)
+                    break;
+            }
+        }
+        if(requested_slot==1)
+        {
+            //indicate upto slot ind needed
+            int slot=requested_slot+2;
+            int start_ind=isSafe2(path,1,slot,temp_slot);
+
+            if(start_ind!=-1)
+            {
+                markSlot(path,1,start_ind,start_ind+slot-1);
+                frequencyOfCore[1]++;
+
+                incrementCoreFrequency(path,1);
+
+                System.out.println("core :"+1+" slot: "+requested_slot);
+                requested_slot=0;
+            }
+
+        }
+        if(requested_slot!=0)
+        {
+            //indicate upto slot ind needed
+            int slot=requested_slot+2;
+
+            int start_ind=isSafe2(path,0,slot,temp_slot);
+
+            if(start_ind!=-1)
+            {
+                markSlot(path,0,start_ind,start_ind+slot-1);
+                frequencyOfCore[0]++;
+
+                incrementCoreFrequency(path,0);
+
+                System.out.println("core :"+0+" slot: "+requested_slot);
+            }
+            else {
+                System.out.println("Allocation Not Possible");
+                flag=0;
+            }
+
+        }
+        if(flag==1)
+            return 1;
+        else
+            return 0;
+    }
+
+//    Algorithm-3 Least Frequent Used(LFU)
+
     static int allocateCoreLeastFrequentModified(int requested_slot, int path[])
     {
+//        reintialization of temp_slot
+        temp_slot = new int[number_of_cores][total_slots];
+        initializeTempSlotForPath(path);
 
         int[] visited;
         visited = new int[number_of_cores];
         for(int i=0;i<number_of_cores;i++)
             visited[i]=0;
+
+        initializeCoreFrequencyForPath(path);
+
         while (requested_slot > 0)
         {
             int selected_core = -1;
@@ -1755,12 +1831,15 @@ class CoreAllocation extends Main
             int no_of_slot_needed =(requested_slot / core_size[selected_core])*core_size[selected_core]+2 ;
 
             // Check if there's enough space in the path for allocation
-            int start_index = isSafe(path, selected_core, no_of_slot_needed);
+            int start_index = isSafe2(path, selected_core, no_of_slot_needed,temp_slot);
+
             int slot_given = 0;
             if (start_index != -1) {
                 slot_given = no_of_slot_needed;
                 markSlot(path, selected_core, start_index, start_index + slot_given - 1);
                 frequencyOfCore[selected_core]++;
+
+                incrementCoreFrequency(path,selected_core);
             }
 
             if (slot_given != 0) {
@@ -1775,7 +1854,7 @@ class CoreAllocation extends Main
             }
 
             // If allocation still not possible and core 0 already used or not sufficient, print message
-             if (requested_slot > 0 && selected_core == 0) {
+            if (requested_slot > 0 && selected_core == 0) {
                 System.out.println("Allocation Not Possible");
                 return 0;
             }
@@ -1788,4 +1867,231 @@ class CoreAllocation extends Main
             return 0;
     }
 
+    static void initializeCoreFrequencyForPath(int path[]) {
+        // Initialize the frequency array to zero initially
+        for (int i = 0; i < number_of_cores; i++) {
+            frequencyOfCore[i] = 0;
+        }
+
+        // Traverse through the path and compute maximum frequency for each core
+        for (int i = path.length - 1; i >= 1; i--) {
+            int sourceNode = path[i];
+            int destinationNode = path[i - 1];
+            String edgeKey = sourceNode + "," + destinationNode;
+
+            // Get the edge number corresponding to this source-destination pair
+            if (copy_edge_map.containsKey(edgeKey)) {
+                int edgeNumber = copy_edge_map.get(edgeKey);
+
+                // For each core, update its frequency with the maximum value along the path
+                for (int core = 0; core < number_of_cores; core++) {
+                    // Use the maximum frequency value along this path
+                    frequencyOfCore[core] = Math.max(frequencyOfCore[core], core_slots[edgeNumber][core][total_slots + 1]);
+                }
+            } else {
+                System.out.println("Edge " + edgeKey + " not found in the network map.");
+            }
+        }
+
+        // Display the updated core frequencies for debugging purposes
+        System.out.println("Updated Core Frequencies (Max Values along Path): " + Arrays.toString(frequencyOfCore));
+    }
+
+    static void incrementCoreFrequency(int[] path, int core_number) {
+        // Traverse the path from the last node to the first
+        for (int i = path.length - 1; i >= 1; i--) {
+            int node1 = path[i];      // Current node (later in the path)
+            int node2 = path[i - 1];  // Previous node (earlier in the path)
+
+            // Create the key for accessing the edge map (e.g., "node1,node2")
+            String edgeKey = node1 + "," + node2;
+
+            // Lookup the edge number using the edge map
+            if (copy_edge_map.containsKey(edgeKey)) {
+                int edge_number = copy_edge_map.get(edgeKey);
+
+                // Increment the frequency of the specified core on the given edge
+                core_slots[edge_number][core_number][total_slots + 1]++;
+            } else {
+                System.out.println("Edge not found: " + edgeKey);
+            }
+        }
+    }
+
+
+//    Algorithm-4 (BLocking Aware)
+    static int allocateCoreUniformly(int requested_slot, int path[]) {
+        int flag = 1;
+        double crosstalk = 0.0;
+
+        temp_slot = new int[number_of_cores][total_slots];
+        initializeTempSlotForPath(path);
+        // Collect cores sorted by their last allocated slot for uniform distribution
+        List<Integer> cores = new ArrayList<>();
+        for (int i = number_of_cores-1; i >0; i--) {
+            cores.add(i);
+        }
+        cores.sort(Comparator.comparingInt(c -> getLastAllocatedSlotForCore(path, c)));
+
+        for (int i : cores) {
+            if (requested_slot >= core_size[i]) {
+                int no_of_slot_needed = (requested_slot / core_size[i]) * core_size[i] + 2;
+
+                int start_index = isSafe2(path, i, no_of_slot_needed,temp_slot);
+
+                int slot_given = 0;
+                if (start_index != -1) {
+                    crosstalk = calculateCrosstalk(path, i, start_index, start_index + slot_given - 1);
+                    System.out.println("Cross talk for core " + i + " :" + crosstalk);
+                    if (crosstalk < -16) {
+                        slot_given = no_of_slot_needed;
+                        markSlot(path, i, start_index, start_index + slot_given - 1);
+                    }
+                }
+
+                if (slot_given != 0) {
+                    System.out.println("core: " + i + " Group: " + (requested_slot / core_size[i]));
+                    requested_slot = requested_slot - (slot_given - 2);
+                    if (requested_slot == 0) break;
+                }
+            }
+        }
+
+        if (requested_slot == 1) {
+            int slot = requested_slot + 2;
+
+            int start_ind = isSafe2(path, 1, slot,temp_slot);
+
+            if (start_ind != -1) {
+                crosstalk = calculateCrosstalk(path, 1, start_ind, start_ind + slot - 1);
+                System.out.println("Cross talk for core " + 1 + " :" + crosstalk);
+                if (crosstalk < -16) {
+                    markSlot(path, 1, start_ind, start_ind + slot - 1);
+                    System.out.println("core :" + 1 + " slot: " + requested_slot);
+                    requested_slot = 0;
+                }
+            }
+        }
+
+        if (requested_slot != 0) {
+            int slot = requested_slot + 2;
+
+            int start_ind = isSafe2(path, 0, slot,temp_slot);
+
+            if (start_ind != -1) {
+                crosstalk = calculateCrosstalk(path, 0, start_ind, start_ind + slot - 1);
+                System.out.println("Cross talk for core " + 0 + " :" + crosstalk);
+                if (crosstalk < -16) {
+                    markSlot(path, 0, start_ind, start_ind + slot - 1);
+                    System.out.println("core :" + 0 + " slot: " + requested_slot);
+                }
+            } else {
+                System.out.println("Allocation Not Possible");
+                flag = 0;
+            }
+        }
+        return flag;
+    }
+
+    static int getLastAllocatedSlotForCore(int path[], int core_number) {
+        int max_last_index = -1;
+        int Nodenum;
+        for (int i = path.length - 1; i >= 1; i--) {
+            int j = i - 1;
+            String key = path[i] + "," + path[j];
+            Nodenum = copy_edge_map.get(key);
+            max_last_index = Math.max(max_last_index, core_slots[Nodenum][core_number][total_slots + 1 - 1]);
+        }
+        return max_last_index;
+    }
+
+    static int[][] initializeTempSlotForPath(int path[]) {
+        // Step 1: Initialize the temp_slot array to zero for each core and slot.
+//        int temp_slot[][] = new int[number_of_cores][total_slots];
+
+        // Step 2: Iterate through the given path to get the corresponding edge numbers.
+        for (int i = path.length - 1; i >= 1; i--) {
+            int sourceNode = path[i];
+            int destinationNode = path[i - 1];
+            String edgeKey = sourceNode + "," + destinationNode;
+
+            // Get the edge number corresponding to this source-destination pair.
+            if (copy_edge_map.containsKey(edgeKey)) {
+                int edgeNumber = copy_edge_map.get(edgeKey);
+
+                // Step 3: For each core, apply the bitwise OR operation for slots across all edges.
+                for (int core = 0; core < number_of_cores; core++) {
+                    for (int slot = 0; slot < total_slots; slot++) {
+                        // Perform bitwise OR with current value in temp_slot.
+                        temp_slot[core][slot] |= core_slots[edgeNumber][core][slot];
+                    }
+                }
+            } else {
+                System.out.println("Edge " + edgeKey + " not found in the network map.");
+            }
+        }
+
+        // Display the updated temp_slot array for debugging.
+        System.out.println("Temp Slot Array After Initialization:");
+        displayTempSlot(temp_slot);
+
+        return temp_slot;
+    }
+
+    // Helper method to display the temp_slot array
+    static void displayTempSlot(int temp_slot[][]) {
+        for (int core = 0; core < number_of_cores; core++) {
+            System.out.print("Core " + core + ": ");
+            for (int slot = 0; slot < total_slots; slot++) {
+                System.out.print(temp_slot[core][slot] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+//    It does not compare the fragmentation ratio
+
+    static int isSafe2(int path[], int core_number, int requested_slot, int temp_slot[][]) {
+        int totalSlotsInCore = total_slots; // Assume total_slots is the maximum number of slots per core
+        int exactStartIndex = -1;  // To track the start index of an exact match
+        int overAllocatedStartIndex = -1;  // To track the first over-allocated sequence
+
+        int zeroCount = 0;  // To count consecutive zeros
+        int startIndex = 0;  // Start index of the zero sequence
+
+        // Step 1: Traverse through the temp_slot array for the given core number
+        for (int i = 0; i < totalSlotsInCore; i++) {
+            if (temp_slot[core_number][i] == 0) {
+                // Increment zero count if a zero is found
+                if (zeroCount == 0) {
+                    startIndex = i;  // Start of a new zero sequence
+                }
+                zeroCount++;
+            } else {
+                // When a non-zero is found, check the previous sequence of zeros
+                if (zeroCount >= requested_slot) {
+                    if (zeroCount == requested_slot) {
+                        // Exact match found, return its starting index immediately
+                        return startIndex;
+                    } else if (zeroCount > requested_slot && overAllocatedStartIndex == -1) {
+                        // Found an over-allocated sequence, store the first one
+                        overAllocatedStartIndex = startIndex;
+                    }
+                }
+                zeroCount = 0;  // Reset zero count on encountering a non-zero
+            }
+        }
+
+        // Final check in case the path ends with a zero sequence
+        if (zeroCount >= requested_slot) {
+            if (zeroCount == requested_slot) {
+                return startIndex;  // Exact match found at the end
+            } else if (zeroCount > requested_slot && overAllocatedStartIndex == -1) {
+                overAllocatedStartIndex = startIndex;
+            }
+        }
+
+        // Step 2: Return the best found start index (exact match or over-allocated) or -1 if no suitable sequence found
+        return overAllocatedStartIndex != -1 ? overAllocatedStartIndex : -1;
+    }
 }
